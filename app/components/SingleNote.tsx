@@ -1,13 +1,17 @@
+import React from 'react';
+
 export interface SingleNoteProps {
-    title?: string
-    content?: string
+    title: string;
+    content: string;
 }
 
-export default function SingleNote({title, content}: SingleNoteProps) {
+const SingleNote: React.FC<SingleNoteProps> = ({ title, content }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-lg font-semibold">{title}</h2>
-            <p className="text-gray-500">{content}</p>
+        <div className="p-4 border rounded-md shadow-md">
+            <h3 className="text-lg font-semibold">{title}</h3>
+            <p className="mt-2">{content}</p>
         </div>
     );
-}
+};
+
+export default SingleNote;
