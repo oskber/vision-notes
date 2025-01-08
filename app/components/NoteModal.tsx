@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { createNote } from '@/app/lib/noteAction';
+import React, {useState} from 'react';
+import {createPortal} from 'react-dom';
+import {createNote} from '@/app/lib/noteAction';
 
 interface TextModalProps {
-    onClose: () => void;
+    onClose: () => void,
+    onSave?: (title: string, text: string) => void
 }
 
-export default function TextModal({ onClose }: TextModalProps) {
+export default function TextModal({onClose}: TextModalProps) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
 
@@ -16,7 +17,7 @@ export default function TextModal({ onClose }: TextModalProps) {
                 <h2 className="text-lg font-semibold text-gray-500">Edit Note</h2>
                 <form onSubmit={async (e) => {
                     e.preventDefault();
-                    await createNote( title, content);
+                    await createNote(title, content);
                     onClose();
                 }}>
                     <input
