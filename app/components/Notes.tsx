@@ -1,27 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import SingleNote, { SingleNoteProps } from './SingleNote';
-import {fetchNotes} from '@/app/lib/noteAction';
 
+interface NotesProps {
+    notes: SingleNoteProps[];
+}
 
-export default function Notes() {
-
-    const [notes, setNotes] = useState<SingleNoteProps[]>([]);
-
-    useEffect(() => {
-        async function getNotes() {
-            const fetchedNotes = await fetchNotes();
-            setNotes(fetchedNotes);
-        }
-        getNotes().then(r => console.log(r));
-    }, []);
-
-
-
+const Notes: React.FC<NotesProps> = ({ notes }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {notes.map((note, index) => (
-                <SingleNote key={index} {...note} />
+            {notes.map((note) => (
+                <SingleNote key={note.id} {...note} />
             ))}
         </div>
     );
-}
+};
+
+export default Notes;
