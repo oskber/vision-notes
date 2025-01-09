@@ -4,15 +4,16 @@ import connectDB from '@/app/lib/connectDB';
 import Note from '@/app/models/noteModel';
 import { Document } from 'mongoose';
 import {revalidatePath} from 'next/cache';
+import {v4 as uuidV4} from 'uuid';
 
 interface NoteType {
-    _id: string;
+    id: string;
     title: string;
     content: string;
 }
 
 interface NoteDocument extends Document {
-    _id: string;
+    id: string;
     title: string;
     content: string;
 }
@@ -22,7 +23,7 @@ export async function fetchNotes(): Promise<NoteType[]> {
         await connectDB();
         const notes = await Note.find({}).lean<NoteDocument[]>();
         return notes.map(note => ({
-            _id: note._id.toString(),
+            id: uuidV4(),
             title: note.title,
             content: note.content,
         }));
@@ -33,7 +34,7 @@ export async function fetchNotes(): Promise<NoteType[]> {
 }
 
 export const createNote = async (title: string, content: string) => {
-    const note = new Note({ title, content });
+    const note = new Note({ id: uuidV4(), title, content });
 
     try {
         await connectDB();
