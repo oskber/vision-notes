@@ -5,7 +5,7 @@ import NoteModal from '@/app/components/NoteModal';
 import {SingleNoteProps} from '@/app/components/SingleNote';
 import {useNotes} from '@/app/context/NotesContext';
 import SelectButton from '@/app/components/header/SelectButton';
-import { v4 as uuidV4 } from 'uuid';
+import mongoose from 'mongoose';
 
 export default function UploadSelect() {
     const photoInputRef = useRef<HTMLInputElement>(null);
@@ -64,7 +64,14 @@ export default function UploadSelect() {
     };
 
     const handleSaveText = (title: string, text: string) => {
-        const newNote: SingleNoteProps = {id: uuidV4(), title, content: text};
+        const newNote: SingleNoteProps = {
+            id: new mongoose.Types.ObjectId().toString(),
+            title,
+            content: text,
+            onDelete: (id: string) => {
+                setNotes(notes.filter((note) => note.id !== id));
+            }
+        };
         setNotes([...notes, newNote]);
     };
 
