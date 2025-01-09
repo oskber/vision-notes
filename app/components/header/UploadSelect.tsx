@@ -39,7 +39,7 @@ export default function UploadSelect() {
                     setExtractedText(data.extractedText);
                     setIsModalOpen(true);
                 } else {
-                    console.error('Failed to upload photo');
+                    console.error('Failed to upload photo', response.status, response.statusText);
                 }
             } catch (error) {
                 console.error('Error uploading photo:', error);
