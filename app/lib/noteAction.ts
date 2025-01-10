@@ -56,3 +56,14 @@ export const deleteNote = async (id: string) => {
         throw new Error((error as Error).message);
     }
 }
+
+export const editNote = async (id: string, title: string, content: string) => {
+    try {
+        await connectDB();
+        await Note.updateOne({ _id: id }, { title, content });
+        console.log("Note updated successfully");
+        revalidatePath('/');
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}

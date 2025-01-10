@@ -1,15 +1,18 @@
 import React from 'react';
 import SingleNote, { SingleNoteProps } from './SingleNote';
 import { deleteNote } from '@/app/lib/noteAction';
+import { useNotes } from '@/app/context/NotesContext';
 
 interface NotesProps {
     notes: SingleNoteProps[];
 }
 
-const Notes: React.FC<NotesProps> = ({ notes }) => {
+const Notes: React.FC<NotesProps> = () => {
+    const { notes, setNotes } = useNotes();
     const handleDeleteNote = async (id: string) => {
         try {
             await deleteNote(id);
+            setNotes(notes.filter((note) => note.id !== id));
         } catch (error) {
             console.error(error);
         }

@@ -2,10 +2,7 @@
 
 import React, {useRef, useEffect, useState} from 'react';
 import NoteModal from '@/app/components/NoteModal';
-import {SingleNoteProps} from '@/app/components/SingleNote';
-import {useNotes} from '@/app/context/NotesContext';
 import SelectButton from '@/app/components/header/SelectButton';
-import mongoose from 'mongoose';
 
 export default function UploadSelect() {
     const photoInputRef = useRef<HTMLInputElement>(null);
@@ -14,7 +11,6 @@ export default function UploadSelect() {
     const [isMobile, setIsMobile] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [extractedText, setExtractedText] = useState('');
-    const {notes, setNotes} = useNotes();
 
     useEffect(() => {
         const userAgent = navigator.userAgent;
@@ -63,17 +59,6 @@ export default function UploadSelect() {
         setIsModalOpen(true);
     };
 
-    const handleSaveText = (title: string, text: string) => {
-        const newNote: SingleNoteProps = {
-            id: new mongoose.Types.ObjectId().toString(),
-            title,
-            content: text,
-            onDelete: (id: string) => {
-                setNotes(notes.filter((note) => note.id !== id));
-            }
-        };
-        setNotes([...notes, newNote]);
-    };
 
     return (
         <div className="flex flex-col gap-4 mr-3">{isMobile ? (
@@ -112,7 +97,6 @@ export default function UploadSelect() {
             {isModalOpen && (
                 <NoteModal
                     onClose={() => setIsModalOpen(false)}
-                    onSave={handleSaveText}
                     initialText={extractedText}
                 />
             )}
