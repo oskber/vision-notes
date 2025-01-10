@@ -1,10 +1,11 @@
 'use client';
 
 import React, {useRef, useEffect, useState} from 'react';
-import TextModal from '@/app/components/TextModal';
+import NoteModal from '@/app/components/NoteModal';
 import {SingleNoteProps} from '@/app/components/SingleNote';
 import {useNotes} from '@/app/context/NotesContext';
 import SelectButton from '@/app/components/header/SelectButton';
+import mongoose from 'mongoose';
 
 export default function UploadSelect() {
     const photoInputRef = useRef<HTMLInputElement>(null);
@@ -12,6 +13,7 @@ export default function UploadSelect() {
     const textInputRef = useRef<HTMLInputElement>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [extractedText, setExtractedText] = useState('');
     const {notes, setNotes} = useNotes();
 
     useEffect(() => {
@@ -20,6 +22,30 @@ export default function UploadSelect() {
             setIsMobile(true);
         }
     }, []);
+
+    const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            try {
+                const response = await fetch('/api/upload-photo', {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setExtractedText(data.extractedText);
+                    setIsModalOpen(true);
+                } else {
+                    console.error('Failed to upload photo', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+            }
+        }
+    };
 
     const handlePhotoClick = () => {
         if (photoInputRef.current) {
@@ -38,7 +64,14 @@ export default function UploadSelect() {
     };
 
     const handleSaveText = (title: string, text: string) => {
-        const newNote: SingleNoteProps = {title, content: text};
+        const newNote: SingleNoteProps = {
+            id: new mongoose.Types.ObjectId().toString(),
+            title,
+            content: text,
+            onDelete: (id: string) => {
+                setNotes(notes.filter((note) => note.id !== id));
+            }
+        };
         setNotes([...notes, newNote]);
     };
 
@@ -58,6 +91,7 @@ export default function UploadSelect() {
                 style={{display: 'none'}}
                 accept="image/*"
                 capture="environment"
+                onChange={handlePhotoUpload}
             />
             <SelectButton onClick={handleFileClick}>
                 File
@@ -66,7 +100,8 @@ export default function UploadSelect() {
                 type="file"
                 ref={fileInputRef}
                 style={{display: 'none'}}
-                accept="*/*"
+                accept="image/*"
+                onChange={handlePhotoUpload}
             />
             <SelectButton onClick={handleTextClick}>Text</SelectButton>
             <input
@@ -75,9 +110,10 @@ export default function UploadSelect() {
                 className="hidden"
             />
             {isModalOpen && (
-                <TextModal
+                <NoteModal
                     onClose={() => setIsModalOpen(false)}
-                    OnSave={handleSaveText}
+                    onSave={handleSaveText}
+                    initialText={extractedText}
                 />
             )}
         </div>

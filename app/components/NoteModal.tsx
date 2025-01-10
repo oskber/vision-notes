@@ -2,14 +2,15 @@ import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
 import {createNote} from '@/app/lib/noteAction';
 
-interface TextModalProps {
+interface NoteModalProps {
     onClose: () => void,
     onSave?: (title: string, text: string) => void
+    initialText?: string;
 }
 
-export default function TextModal({onClose}: TextModalProps) {
+export default function NoteModal({onClose, initialText}: NoteModalProps) {
     const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState(initialText || '');
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

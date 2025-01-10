@@ -6,7 +6,7 @@ import { Document } from 'mongoose';
 import {revalidatePath} from 'next/cache';
 
 interface NoteType {
-    _id: string;
+    id: string;
     title: string;
     content: string;
 }
@@ -22,7 +22,7 @@ export async function fetchNotes(): Promise<NoteType[]> {
         await connectDB();
         const notes = await Note.find({}).lean<NoteDocument[]>();
         return notes.map(note => ({
-            _id: note._id.toString(),
+            id: note._id.toString(),
             title: note.title,
             content: note.content,
         }));
@@ -39,6 +39,18 @@ export const createNote = async (title: string, content: string) => {
         await connectDB();
         await note.save();
         console.log("Note created successfully");
+        revalidatePath('/');
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+export const deleteNote = async (id: string) => {
+    try {
+        await connectDB();
+        await Note.deleteOne
+        ({_id: id});
+        console.log("Note deleted successfully");
         revalidatePath('/');
     } catch (error) {
         throw new Error((error as Error).message);
