@@ -9,15 +9,15 @@ export interface SingleNoteProps {
 
 const SingleNote: React.FC<SingleNoteProps> = ({ id, title, content, onDelete }) => {
     return (
-        <div className="p-4 border rounded-md shadow-md flex flex-col justify-between items-start sm:h-32 sm:w-32 md:h-36 md:w-36 lg:h-40 lg:w-40"
+        <div className="relative p-2 border rounded-md shadow-md h-24 w-24 sm:h-40 sm:w-40 md:h-48 md:w-48 lg:h-56 lg:w-56"
              id={`note-${id}`}>
             <div className="flex-grow flex flex-col justify-start items-start">
-                <h3 className="text-lg font-semibold text-center">{title}</h3>
-                <p className="mt-2 text-center">{content}</p>
+                <h3 className="uppercase text-lg font-semibold text-center truncate w-full">{title}</h3>
+                <p className="line-clamp-1 sm:line-clamp-3 md:line-clamp-4 lg:line-clamp-5 w-full">{content}</p>
             </div>
             <button
                 onClick={() => onDelete(id)}
-                className="self-end mt-4 px-2 py-1 text-white bg-red-500 rounded-md"
+                className="absolute bottom-2 right-2 mt-4 px-2 py-0.5 text-white bg-red-500 rounded-md hover:bg-red-400"
             >
                 X
             </button>

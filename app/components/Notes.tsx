@@ -16,10 +16,12 @@ const Notes: React.FC<NotesProps> = ({ notes }) => {
     }
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {notes.map((note) => (
-                <SingleNote key={note.id} {...note} onDelete={handleDeleteNote} />
-            ))}
+        <div className="flex justify-center items-center">
+            <div className="flex flex-grow gap-4 flex-wrap justify-center">
+                {notes.map((note) => (
+                   <SingleNote key={note.id} {...note} onDelete={handleDeleteNote} />
+                ))}
+            </div>
         </div>
     );
 };
