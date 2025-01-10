@@ -15,7 +15,20 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     const [notes, setNotes] = useState<SingleNoteProps[]>([]);
 
     useEffect(() => {
-        fetchNotes().then(fetchedNotes => setNotes(fetchedNotes));
+        fetchNotes().then(fetchedNotes => {
+            const notesWithHandlers = fetchedNotes.map(note => ({
+                ...note,
+                onDelete: (id: string) => {
+                    setNotes(notes.filter(n => n.id !== id));
+                },
+                onEdit: (id: string, newTitle: string, newContent: string) => {
+                    setNotes(notes.map(n =>
+                        n.id === id ? { ...n, title: newTitle, content: newContent } : n
+                    ));
+                }
+            }));
+            setNotes(notesWithHandlers);
+        });
     }, []);
 
     return (

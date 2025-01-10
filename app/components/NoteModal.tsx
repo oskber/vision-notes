@@ -1,16 +1,55 @@
 import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
-import {createNote} from '@/app/lib/noteAction';
+import { createNote } from '@/app/lib/noteAction';
+import { useNotes } from '@/app/context/NotesContext';
+import mongoose from 'mongoose';
 
 interface NoteModalProps {
     onClose: () => void,
-    onSave?: (title: string, text: string) => void
     initialText?: string;
+    initialTitle?: string;
+    initialNoteId?: string;
 }
 
-export default function NoteModal({onClose, initialText}: NoteModalProps) {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState(initialText || '');
+export default function NoteModal({onClose, initialText = '', initialTitle = '', initialNoteId}: NoteModalProps) {
+    const [title, setTitle] = useState(initialTitle);
+    const [content, setContent] = useState(initialText);
+    const { notes, setNotes } = useNotes();
+
+    const handleSaveText = async (title: string, text: string) => {
+        const existingNoteIndex = notes.findIndex(note => note.id === initialNoteId);
+        if (existingNoteIndex !== -1) {
+            const updatedNotes = [...notes];
+            updatedNotes[existingNoteIndex] = {
+                ...updatedNotes[existingNoteIndex],
+                title,
+                content: text
+            };
+            setNotes(updatedNotes);
+        } else {
+            const newNote = {
+                id: new mongoose.Types.ObjectId().toString(),
+                title,
+                content: text,
+                onDelete: (id: string) => {
+                    setNotes(notes.filter((note) => note.id !== id));
+                },
+                onEdit: (id: string, newTitle: string, newContent: string) => {
+                    setNotes(notes.map((note) =>
+                        note.id === id ? {...note, title: newTitle, content: newContent} : note
+                    ));
+                }
+            };
+
+            try {
+                await createNote(title, text);
+                setNotes([...notes, newNote]);
+            } catch (error) {
+                console.error('Error saving note:', error);
+            }
+        }
+    };
+
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -18,7 +57,7 @@ export default function NoteModal({onClose, initialText}: NoteModalProps) {
                 <h2 className="text-lg font-semibold text-gray-500">Edit Note</h2>
                 <form onSubmit={async (e) => {
                     e.preventDefault();
-                    await createNote(title, content);
+                    await handleSaveText(title, content);
                     onClose();
                 }}>
                     <input
