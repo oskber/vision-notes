@@ -16,7 +16,7 @@ const Notes: React.FC<NotesProps> = ({ notes }) => {
     }
 
     return (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center p-10">
             <div className="flex flex-grow gap-4 flex-wrap justify-center">
                 {notes.map((note) => (
                    <SingleNote key={note.id} {...note} onDelete={handleDeleteNote} />
