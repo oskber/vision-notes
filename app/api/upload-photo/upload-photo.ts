@@ -1,5 +1,5 @@
-import { IncomingForm } from 'formidable';
-import { NextApiRequest, NextApiResponse } from 'next';
+import {IncomingForm} from 'formidable';
+import {NextApiRequest, NextApiResponse} from 'next';
 import * as fs from 'fs';
 import vision from '@google-cloud/vision';
 
