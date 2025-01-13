@@ -11,6 +11,7 @@
   "dependencies": {
     "@google-cloud/vision": "^4.3.2",
     "@types/formidable": "^3.4.5",
+    "bcryptjs": "^2.4.3",
     "formidable": "^3.5.2",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.0",
@@ -23,6 +24,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

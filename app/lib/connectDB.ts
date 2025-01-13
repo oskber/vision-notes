@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 const MONGO_URI: string = process.env.MONGODB_URI ?? "";
-console.log('MONGODB_URI:', MONGO_URI);
 
 if (!MONGO_URI) {
   throw new Error('MONGODB_URI is not set');
@@ -18,7 +17,6 @@ const cached = globalWithMongoose.mongoose;
 async function connectDB() {
   console.log('connectDB called');
   if (cached.conn) {
-    console.log('Using existing database connection');
     return cached.conn;
   }
 
