@@ -1,15 +1,16 @@
 'use client';
 
-import React, {useRef, useState } from 'react';
+import {useRouter} from 'next/navigation';
+import React, {useRef, useState} from 'react';
 
 const RegisterForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const passwordRef = useRef<HTMLInputElement>(null);
     const [message, setMessage] = useState('');
+    const router = useRouter();
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
         const password = passwordRef.current?.value;
 
         try {
@@ -29,6 +30,7 @@ const RegisterForm: React.FC = () => {
             }
 
             setMessage('User created successfully');
+            router.push('/api/auth/signin');
         } catch (error) {
             setMessage('Error signing up');
         }

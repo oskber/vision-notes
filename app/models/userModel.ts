@@ -1,8 +1,11 @@
-import mongoose, {Model} from 'mongoose';
+import mongoose, {Model, Schema} from 'mongoose';
 
 interface IUser extends mongoose.Document {
+    _id: string,
     username: string;
     password: string;
+    githubId: string;
+    mongoId: Schema.Types.ObjectId;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -13,7 +16,17 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        required: false,
+    },
+    githubId: {
+        type: String,
         required: true,
+        unique: true,
+    },
+    mongoId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        unique: true,
     },
 });
 

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { NextResponse} from 'next/server';
+import {NextResponse} from 'next/server';
 import mongoose from 'mongoose';
 import User from '@/app/models/userModel';
 
@@ -11,7 +11,7 @@ async function connectDb() {
     await mongoose.connect(mongoUri);
 }
 
-async function RegisterHandler(request: Request) {
+export async function POST(request: Request) {
     if (request.method !== 'POST') {
         return NextResponse.json({ error: 'Method not allowed' });
     }
@@ -41,5 +41,3 @@ async function RegisterHandler(request: Request) {
         return NextResponse.json({ error: 'Error creating user' }, { status: 500 });
     }
 }
-
-export const POST = RegisterHandler;

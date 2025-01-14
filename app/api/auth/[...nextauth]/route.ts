@@ -1,45 +1,49 @@
-import NextAuth from 'next-auth';
+import NextAuth, {NextAuthOptions, Profile as NextAuthProfile, Session} from 'next-auth';
+import {JWT} from 'next-auth/jwt';
 import GithubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import {MongoClient} from 'mongodb';
 import bcrypt from 'bcryptjs';
+import mongoose, {Types} from 'mongoose';
+import User from '@/app/models/userModel';
+import connectDB from '@/app/lib/connectDB';
 
-if (!process.env.MONGODB_URI) {
-    throw new Error("MONGODB_URI must be defined");
+const mongoUri = process.env.MONGODB_URI;
+
+async function connectDb() {
+    if (!mongoUri) {
+        throw new Error('MONGODB_URI must be defined');
+    }
+    await mongoose.connect(mongoUri);
 }
-const client = new MongoClient(process.env.MONGODB_URI);
-
-
 interface User {
     id: string;
     name: string;
+}
+
+interface ExtendedProfile extends NextAuthProfile {
+    id: string;
+    login: string;
 }
 
 async function authorize(credentials: Record<'username' | 'password', string> | undefined): Promise<User | null> {
     if (!credentials) {
         return null;
     }
-    
+
     try {
-        await client.connect();
-        const db = client.db();
-        const usersCollection = db.collection('users');
-        
-        const user = await usersCollection.findOne({ username: credentials.username, password: credentials.password });
+        await connectDb();
+        const usersCollection = mongoose.connection.collection('users');
+        const user = await usersCollection.findOne({username: credentials.username});
         if (!user) {
             return null;
         }
-
         const isValidPassword = await bcrypt.compare(credentials.password, user.password);
         if (!isValidPassword) {
             return null;
         }
-
-            return {id: user._id.toString(), name: user.username};
+        return {id: user._id.toString(), name: user.username};
     } catch (error) {
         throw new Error('Authentication failed');
-    } finally {
-        await client.close();
     }
 }
 
@@ -47,7 +51,7 @@ if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
     throw new Error("GITHUB_ID and GITHUB_SECRET must be defined");
 }
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         GithubProvider({
             clientId: process.env.GITHUB_CLIENT_ID,
@@ -63,6 +67,34 @@ export const authOptions = {
             authorize,
         }),
     ],
+    callbacks: {
+        async session({session, token}: { session: Session, token: JWT }) {
+            console.log('Session callback - token:', token);
+            if (token?.sub) {
+                session.user.id = token.sub;
+                session.user.name = token.name;
+            }
+            console.log('Session callback - session:', session);
+            return session;
+        },
+        async jwt({token, account, profile}) {
+            if (account?.provider === 'github' && profile) {
+                const extendedProfile = profile as ExtendedProfile;
+                await connectDB();
+                let dbUser = await User.findOne({githubId: extendedProfile.id});
+                if (!dbUser) {
+                    dbUser = new User({
+                        username: extendedProfile.login,
+                        githubId: extendedProfile.id,
+                        mongoId: new Types.ObjectId(),
+                    });
+                    await dbUser.save();
+                }
+                token.id = dbUser.githubId;
+            }
+            return token;
+        },
+    }
 }
 
 export const POST = NextAuth(authOptions);
