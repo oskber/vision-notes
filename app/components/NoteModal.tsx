@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
-import { createNote } from '@/app/lib/noteAction';
-import { useNotes } from '@/app/context/NotesContext';
+import {createNote, editNote} from '@/app/lib/noteAction';
+import {useNotes} from '@/app/context/NotesContext';
 import mongoose from 'mongoose';
 
 interface NoteModalProps {
@@ -14,18 +14,27 @@ interface NoteModalProps {
 export default function NoteModal({onClose, initialText = '', initialTitle = '', initialNoteId}: NoteModalProps) {
     const [title, setTitle] = useState(initialTitle);
     const [content, setContent] = useState(initialText);
-    const { notes, setNotes } = useNotes();
+    const {notes, setNotes} = useNotes();
 
     const handleSaveText = async (title: string, text: string) => {
-        const existingNoteIndex = notes.findIndex(note => note.id === initialNoteId);
-        if (existingNoteIndex !== -1) {
-            const updatedNotes = [...notes];
-            updatedNotes[existingNoteIndex] = {
-                ...updatedNotes[existingNoteIndex],
-                title,
-                content: text
-            };
-            setNotes(updatedNotes);
+        if (initialNoteId) {
+            const existingNoteIndex = notes.findIndex(note => note.id === initialNoteId);
+            if (existingNoteIndex !== -1) {
+                try {
+                    await editNote(initialNoteId, title, text);
+                    const updatedNotes = [...notes];
+                    updatedNotes[existingNoteIndex] = {
+                        ...updatedNotes[existingNoteIndex],
+                        title,
+                        content: text
+                    };
+                    setNotes(updatedNotes);
+                } catch (error) {
+                    console.error('Error updating note:', error);
+                }
+            } else {
+                console.error('Note with the given ID does not exist.');
+            }
         } else {
             const newNote = {
                 id: new mongoose.Types.ObjectId().toString(),
@@ -49,7 +58,6 @@ export default function NoteModal({onClose, initialText = '', initialTitle = '',
             }
         }
     };
-
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
