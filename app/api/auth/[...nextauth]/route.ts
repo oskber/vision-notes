@@ -69,12 +69,10 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async session({session, token}: { session: Session, token: JWT }) {
-            console.log('Session callback - token:', token);
             if (token?.sub) {
                 session.user.id = token.sub;
                 session.user.name = token.name;
             }
-            console.log('Session callback - session:', session);
             return session;
         },
         async jwt({token, account, profile}) {
@@ -97,5 +95,6 @@ export const authOptions: NextAuthOptions = {
     }
 }
 
-export const POST = NextAuth(authOptions);
-export const GET = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

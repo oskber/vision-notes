@@ -1,8 +1,9 @@
 'use client';
 
-import React, {createContext, useState, useContext, ReactNode, useEffect} from 'react';
-import { SingleNoteProps } from '@/app/components/SingleNote';
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import {SingleNoteProps} from '@/app/components/SingleNote';
 import {fetchNotes} from '@/app/lib/noteAction';
+import {signIn} from 'next-auth/react';
 
 interface NotesContextProps {
     notes: SingleNoteProps[];
@@ -11,28 +12,39 @@ interface NotesContextProps {
 
 const NotesContext = createContext<NotesContextProps | undefined>(undefined);
 
-export const NotesProvider = ({ children }: { children: ReactNode }) => {
+export const NotesProvider = ({children}: { children: ReactNode }) => {
     const [notes, setNotes] = useState<SingleNoteProps[]>([]);
 
     useEffect(() => {
-        fetchNotes().then(fetchedNotes => {
-            const notesWithHandlers = fetchedNotes.map(note => ({
-                ...note,
-                onDelete: (id: string) => {
-                    setNotes(notes.filter(n => n.id !== id));
-                },
-                onEdit: (id: string, newTitle: string, newContent: string) => {
-                    setNotes(notes.map(n =>
-                        n.id === id ? { ...n, title: newTitle, content: newContent } : n
-                    ));
+        async function loadNotes() {
+            try {
+                const fetchedNotes = await fetchNotes();
+                if (fetchedNotes.length === 0) {
+                    await signIn();
+                } else {
+                    const notesWithHandlers = fetchedNotes.map(note => ({
+                        ...note,
+                        onDelete: (id: string) => {
+                            setNotes(notes.filter(n => n.id !== id));
+                        },
+                        onEdit: (id: string, newTitle: string, newContent: string) => {
+                            setNotes(notes.map(n =>
+                                n.id === id ? { ...n, title: newTitle, content: newContent } : n
+                            ));
+                        }
+                    }));
+                    setNotes(notesWithHandlers);
                 }
-            }));
-            setNotes(notesWithHandlers);
-        });
+            } catch (error) {
+                console.error('Error loading notes:', error);
+            }
+        }
+
+        loadNotes();
     }, []);
 
     return (
-        <NotesContext.Provider value={{ notes, setNotes }}>
+        <NotesContext.Provider value={{notes, setNotes}}>
             {children}
         </NotesContext.Provider>
     );
