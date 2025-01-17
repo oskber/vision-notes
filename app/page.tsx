@@ -16,8 +16,7 @@ export default function HomePage() {
     }
 
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen">
-            <h1 className="text-3xl mb-6">Your Notes</h1>
+        <main className="flex flex-col items-center min-h-screen mt-5">
 
             {notes.length > 0 ? (
                 <div className="flex flex-wrap gap-4">
