@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import {NotesProvider} from '@/app/context/NotesContext';
 import Header from '@/app/components/header/Header';
-import SessionProviderWrapper from '@/app/components/SessionProviderWrapper';
+import {SessionProvider} from 'next-auth/react';
 
 
 const geistSans = localFont({
@@ -32,12 +32,12 @@ export default function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-        <SessionProviderWrapper>
+        <SessionProvider>
             <NotesProvider>
                 <Header/>
                 {children}
             </NotesProvider>
-        </SessionProviderWrapper>
+        </SessionProvider>
         </body>
         </html>
     );
