@@ -9,6 +9,7 @@ export interface SingleNoteComponentProps {
     title: string;
     content: string;
     onDelete: (id: string) => void;
+    createdAt: string;
 }
 
 export interface SingleNoteProps {

@@ -2,6 +2,8 @@ import AddButton from '@/app/components/header/AddButton';
 import { auth, signOut } from '@/auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import LogoutButton from '@/app/components/LogoutButton';
+import LoginButton from '@/app/components/LoginButton';
 
 function SignOut() {
     return (
@@ -9,7 +11,7 @@ function SignOut() {
             'use server';
             await signOut()
         }}>
-            <button type="submit">Sign out</button>
+        <LogoutButton/>
         </form>
     )
 }
@@ -19,11 +21,11 @@ const Header = async () => {
     const session = await auth();
     console.log("session header: ", session);
     return (
-        <header className="flex flex-col items-center justify-center border-b">
-            <nav className="flex items-center justify-between w-full px-6">
+        <header className="flex flex-col items-center border-b p-4">
+            <nav className="flex items-center justify-between w-full">
                 {session?.user ? (
-                    <div className="flex-column">
-                        {session.user.name && <span>{session.user.name}</span>}
+                    <div className="flex-col space-y-2">
+                        {session.user.name && <span className="text-gray-200">{session.user.name}</span>}
                         {session.user.image &&
                             <Image src={session.user.image} alt={session.user.name ?? "User"} width={32} height={32}
                                    className="rounded-full"/>}
@@ -31,7 +33,7 @@ const Header = async () => {
                     </div>
                 ) : (
                     <Link href="/login">
-                        <button className="">Sign in</button>
+                        <LoginButton />
                     </Link>
                 )
                 }

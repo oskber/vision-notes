@@ -1,11 +1,11 @@
 import SocialLogin from '@/app/components/SocialLogin'
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { useState } from 'react';
 
 const LoginForm = () => {
 
-    const [error, setError] = useState('');
-    const router = useRouter();
+    // const [error, setError] = useState('');
+    // const router = useRouter();
 
     // async function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     //     event.preventDefault();
@@ -40,7 +40,7 @@ const LoginForm = () => {
 
             {/*</form>*/}
             <SocialLogin/>
-            <p className="text-red">{error}</p>
+            {/*<p className="text-red">{error}</p>*/}
         </>
 );
 }
