@@ -1,14 +1,9 @@
 import React, {useState} from 'react';
 import NoteModal from '@/app/components/NoteModal';
+import { SingleNoteComponentProps } from "@/app/types/note";
 
-export interface SingleNoteProps {
-    id: string;
-    title: string;
-    content: string;
-    onDelete: (id: string) => void;
-}
 
-const SingleNote: React.FC<SingleNoteProps> = ({ id, title, content, onDelete }) => {
+const SingleNote: React.FC<SingleNoteComponentProps> = ({ id, title, content, onDelete }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTitle] = useState(title);
     const [currentContent] = useState(content);

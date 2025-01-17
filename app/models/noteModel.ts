@@ -1,21 +1,23 @@
-import mongoose, {model, models} from 'mongoose';
+import mongoose, {Schema, Document, InferSchemaType, Types} from 'mongoose';
 
-const NoteSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    title: {
-        type: String,
-        required: false,
-    },
-    content: {
-        type: String,
-        required: true,
-    },
-});
+export interface NoteDocument extends Document {
+    _id: Types.ObjectId;
+    updatedAt: string;
+    createdAt: string;
+    title: string;
+    content: string;
+    userId: string;
+}
 
-const Note = models.Note || model('Note', NoteSchema);
+const NoteSchema = new Schema<NoteDocument>(
+    {
+        title: { type: String, required: false },
+        content: { type: String, required: true },
+        userId: { type: String, required: true },
+    },
+    { timestamps: true }
+);
 
-export default Note;
+export type NoteType = InferSchemaType<typeof NoteSchema>;
+
+export default mongoose.models.Note || mongoose.model<NoteDocument>('Note', NoteSchema);
