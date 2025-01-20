@@ -18,7 +18,10 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 setLoading(true);
                 const notes = await fetchNotes();
-                setNotes(notes);
+                const sortedNotes = notes.sort((a, b) => {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                })
+                setNotes(sortedNotes);
                 setError(null);
             } catch (error) {
                 console.error('Error loading notes:', error);
