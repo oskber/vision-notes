@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, {useState} from 'react';
+import {createPortal} from 'react-dom';
 import {createNote, editNote} from '@/app/actions/noteAction';
-import { useNotes } from '@/app/context/NotesContext';
+import {useNotes} from '@/app/context/NotesContext';
 
 interface NoteModalProps {
     onClose: () => void;
@@ -10,31 +10,31 @@ interface NoteModalProps {
     initialNoteId?: string;
 }
 
-export default function NoteModal({ onClose, initialText = '', initialTitle = '', initialNoteId }: NoteModalProps) {
+export default function NoteModal({onClose, initialText = '', initialTitle = '', initialNoteId}: NoteModalProps) {
     const [title, setTitle] = useState(initialTitle);
     const [content, setContent] = useState(initialText);
-    const { notes, setNotes } = useNotes();
+    const {notes, setNotes} = useNotes();
 
     const handleSaveText = async () => {
         try {
             if (!initialNoteId) {
-                // Create a new note
+
                 const newNote = await createNote(title, content);
-                setNotes([...notes, newNote]); // Add the new note to the state
+                setNotes([...notes, newNote]);
                 console.log('Note created successfully:', newNote);
             } else {
-                // Edit an existing note
-                await editNote(initialNoteId, title, content); // Use the server-side `editNote` function
+
+                await editNote(initialNoteId, title, content);
                 const updatedNotes = notes.map((note) =>
                     note._id === initialNoteId
-                        ? { ...note, title, content } // Update the note locally
+                        ? {...note, title, content}
                         : note
                 );
-                setNotes(updatedNotes); // Update the context with the modified note
+                setNotes(updatedNotes);
                 console.log('Note updated successfully');
             }
 
-            onClose(); // Close the modal after saving
+            onClose();
         } catch (error) {
             console.error('Error saving note:', error);
             alert('An error occurred while saving the note. Please try again.');
@@ -43,7 +43,8 @@ export default function NoteModal({ onClose, initialText = '', initialTitle = ''
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-70">
-            <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 h-auto flex flex-col justify-between bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg py-5 px-4">
+            <div
+                className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 h-auto flex flex-col justify-between bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg py-5 px-4">
                 <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
                     {initialNoteId ? 'Edit Note' : 'Create Note'}
                 </h2>
@@ -53,7 +54,6 @@ export default function NoteModal({ onClose, initialText = '', initialTitle = ''
                         await handleSaveText();
                     }}
                 >
-                    {/* Title Input */}
                     <input
                         type="text"
                         name="title"
@@ -62,7 +62,6 @@ export default function NoteModal({ onClose, initialText = '', initialTitle = ''
                         placeholder="Title"
                         className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-2 rounded-lg border border-gray-300 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
                     />
-                    {/* Content Textarea */}
                     <textarea
                         name="content"
                         value={content}
@@ -70,7 +69,6 @@ export default function NoteModal({ onClose, initialText = '', initialTitle = ''
                         placeholder="Content"
                         className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-2 rounded-lg border border-gray-300 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 mb-4 h-32 resize-none"
                     />
-                    {/* Buttons */}
                     <div className="flex justify-end mt-4">
                         <button
                             type="button"
