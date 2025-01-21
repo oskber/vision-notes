@@ -16,7 +16,6 @@ export async function fetchNotes(): Promise<SingleNoteProps[]> {
         }
 
         const notes = await Note.find({userId: session.user.id}).lean<NoteDocument[]>();
-        console.log('Notes fetched:', notes);
 
         return notes.map((note) => ({
             _id: note._id.toString(),
@@ -27,7 +26,6 @@ export async function fetchNotes(): Promise<SingleNoteProps[]> {
             updatedAt: note.updatedAt.toString(),
         }));
     } catch (error) {
-        console.error('Error fetching notes:', error);
         throw error;
     }
 }
