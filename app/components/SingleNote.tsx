@@ -22,13 +22,13 @@ const SingleNote: React.FC<SingleNoteComponentProps> = ({ id, title, content, on
     };
 
     return (
-        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 h-34 flex flex-col justify-between bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg mb-6 py-5 px-4" id={`note-${id}`}>
+        <div className="w-full sm:w-auto max-w-sm flex flex-col justify-between bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg mb-2 py-5 px-4" id={`note-${id}`}>
             <div>
                 <h3 className="text-gray-800 dark:text-gray-100 font-bold mb-3 truncate">{title}</h3>
                 <p className="text-gray-800 dark:text-gray-100 text-sm line-clamp-3">{content}</p>
             </div>
             <div className="flex items-center justify-between text-gray-800 dark:text-gray-100">
-                <p className="text-sm">{formatDate(createdAt)}</p>
+                <p className="text-sm mr-2">{formatDate(createdAt)}</p>
                 <div className="flex gap-2">
                     <button
                         onClick={handleEditClick}

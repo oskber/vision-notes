@@ -17,8 +17,9 @@ const Notes: React.FC = () => {
 
 
     return (
-        <div className="flex justify-center items-center p-10">
-            <div className="flex flex-grow gap-4 flex-wrap justify-center">
+        <div className="flex justify-center p-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+>
                 {mappedNotes.map((note) => (
                     <SingleNote key={note.id} {...note} />
                 ))}

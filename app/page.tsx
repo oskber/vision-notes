@@ -27,7 +27,7 @@ export default function HomePage() {
 
     return (
 
-        <main className="flex flex-col items-center min-h-screen mt-5">
+        <main className="min-h-screen mt-5">
             <div>
                 {notes.length > 0 ? (
                     <Notes/>
