@@ -77,23 +77,14 @@ export const {handlers: {GET, POST}, auth, signIn, signOut} = NextAuth({
         },
         async jwt({token, user}) {
             if (user) {
-                console.log('jwt - user:', user);
                 token.sub = user.id || user._id?.toString();
-                console.log('jwt - token.sub set to MongoDB ID:', token.sub);
-            } else {
-                console.log('jwt - no user, token.sub:', token.sub);
             }
             return token;
         },
 
         async session({session, token}) {
-            console.log('session - received token.sub:', token.sub);
-
             if (token?.sub) {
                 session.user.id = token.sub;
-                console.log('session - session.user.id set to:', session.user.id);
-            } else {
-                console.log('session - token.sub is undefined');
             }
             return session;
         },
