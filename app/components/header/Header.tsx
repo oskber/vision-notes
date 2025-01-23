@@ -2,8 +2,8 @@ import AddButton from '@/app/components/header/AddButton';
 import { auth, signOut } from '@/auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import LogoutButton from '@/app/components/LogoutButton';
-import LoginButton from '@/app/components/LoginButton';
+import LogoutButton from '@/app/components/header/LogoutButton';
+import LoginButton from '@/app/components/header/LoginButton';
 
 function SignOut() {
     return (
