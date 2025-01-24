@@ -2,13 +2,12 @@ import {NextResponse} from 'next/server';
 import vision from '@google-cloud/vision';
 import {auth} from '@/auth';
 
-
 const base64Credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
 if (!base64Credentials) {
-    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_BASE64 environment variable not set');
+    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_BASE64 is not set');
 }
-
-const client = new vision.ImageAnnotatorClient({base64Credentials});
+const credentials = JSON.parse(Buffer.from(base64Credentials, 'base64').toString('utf-8'));
+const client = new vision.ImageAnnotatorClient({credentials});
 
 export const config = {
     api: {
