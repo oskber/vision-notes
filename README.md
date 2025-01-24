@@ -10,5 +10,6 @@ npm install
 npm run dev //visit localhost:3000
 ```
 
-
+## Or
+Visit https://vision-notes.vercel.app/
 
