@@ -14,7 +14,8 @@ export default function UploadSelect() {
 
     useEffect(() => {
         const userAgent = navigator.userAgent;
-        if (/android|iPad|iPhone|iPod/.test(userAgent)) {
+        console.log(userAgent);
+        if (/Android|iPad|iPhone|iPod/.test(userAgent)) {
             setIsMobile(true);
         }
     }, []);
