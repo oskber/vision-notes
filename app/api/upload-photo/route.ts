@@ -4,7 +4,6 @@ import {auth} from '@/auth';
 
 
 const base64Credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
-
 if (!base64Credentials) {
     throw new Error('GOOGLE_APPLICATION_CREDENTIALS_BASE64 environment variable not set');
 }
