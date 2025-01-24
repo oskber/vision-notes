@@ -1,7 +1,15 @@
 import {NextResponse} from 'next/server';
 import vision from '@google-cloud/vision';
+import {auth} from '@/auth';
 
-const client = new vision.ImageAnnotatorClient();
+
+const base64Credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
+
+if (!base64Credentials) {
+    throw new Error('GOOGLE_APPLICATION_CREDENTIALS_BASE64 environment variable not set');
+}
+
+const client = new vision.ImageAnnotatorClient({base64Credentials});
 
 export const config = {
     api: {
@@ -10,8 +18,9 @@ export const config = {
 };
 
 export async function POST(req: Request) {
-    if (req.method !== 'POST') {
-        return NextResponse.json({error: 'Method not allowed'}, {status: 405});
+    const session = await auth();
+    if (!session?.user) {
+        return NextResponse.json({error: 'User not authenticated'}, {status: 401});
     }
 
     try {
